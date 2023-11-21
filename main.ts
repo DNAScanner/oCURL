@@ -7,7 +7,8 @@ if (!downloadUrl) {
 	Deno.exit(1);
 }
 
-const filename = downloadUrl.split("/").at(-1)?.split("?")[0] || "download";
+const decodedUrl = decodeURIComponent(downloadUrl);
+const filename = decodedUrl.split("/").at(-1)?.split("?")[0] || "download";
 
 // Download the (internet) file to a local file.
 try {
