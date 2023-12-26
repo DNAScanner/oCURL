@@ -1,4 +1,5 @@
 import {crayon} from "https://deno.land/x/crayon@3.3.3/mod.ts";
+import progressFetch from "https://dnascanner.de/functions/deno/fetchprogress.ts";
 
 const downloadUrl = Deno.args[0] || "";
 
@@ -10,12 +11,11 @@ if (!downloadUrl) {
 const decodedUrl = decodeURIComponent(downloadUrl);
 const filename = decodedUrl.split("/").at(-1)?.split("?")[0] || "download";
 
-// Download the (internet) file to a local file.
 try {
-	Deno.writeFileSync(filename, new Uint8Array(await (await fetch(downloadUrl)).arrayBuffer()));
+	await progressFetch(decodedUrl, filename);
+	console.log(`\x1b[1F\x1b[1MDownloaded ${crayon.green(filename)} to ${crayon.green(filename)}`);
+	Deno.exit(0);
 } catch {
 	console.error("Failed to download file");
 	Deno.exit(1);
 }
-
-console.log(`    ${crayon.green(downloadUrl)}\n -> ${crayon.green((Deno.cwd() + "/" + filename).replaceAll("\\", "/"))}`);
